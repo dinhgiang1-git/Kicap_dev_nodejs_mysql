@@ -1,0 +1,165 @@
+<div class="breadcrumb">
+  <div class="bread">
+    <a href="/">Trang chủ</a>
+    <span></span>
+    <span> > <a href="/keycaps/list-page">Danh sách sản phẩm</a></span>
+    <span></span>
+    <span> > <a href="/keycaps/{{keycaps.id}}">Chi tiết</a></span>
+  </div>
+</div>
+<div class="detail-container">
+  <div class="product-img">
+    <div class="main-img">
+      <img id="productImage" src="" alt="" />
+    </div>
+    <div class="thumbnail-img">
+      <img src="" alt="" />
+      <img src="" alt="" />
+      <img src="" alt="" />
+      <img src="" alt="" />
+    </div>
+  </div>
+  <div class="product-detail">
+    <div class="product-description">
+      <p id="productName"></p>
+      <p class="slug">SKU: <span id="productSlug"></span></p>
+      <p class="trade-mark">Thương hiệu: <span>GMK</span></p>
+      <p class="price" style="font-weight: bold; font-size: 26px;">
+        <span id="productPrice"></span>
+        <span>Giá thị trường:
+          <span
+            style="text-decoration: line-through; font-size: 16px;"
+          ><span id="productOldPrice"></span></span></span>
+      </p>
+      <p class="save-price">Tiết kiệm:
+        <span style="color: #CCC;">100.000đ</span></p>
+      <p class="stock-status">Tình trạng:
+        <span style="color: green; font-weight: bold;">Còn Hàng</span></p>
+    </div>
+
+    <div class="product-actions">
+      <div class="quantity">
+        <p
+          style="height: 14px; text-align: center; padding-top: 2.5px; font-weight: 500; letter-spacing: 2px;"
+        >Số lượng: </p>
+        <button class="qty-btn">-</button>
+        <input type="number" value="1" min="1" />
+        <button class="qty-btn">+</button>
+      </div>
+    </div>
+
+    <div class="add-to-cart-detail">
+      <div
+        class="add-to-cart-btn"
+        id="addToCartBtn"
+        data-id=""
+        data-name=""
+        data-price=""
+        data-img=""
+      >
+        <p>Thêm vào giỏ hàng</p>
+        <p>Giao hàng toàn quốc</p>
+      </div>
+    </div>
+
+    <div class="additional-info">
+      <p>Gọi đặt mua:
+        <span style="color: blue; font-weight: bold;">0369.161.095</span><span>
+          (miễn phí 8:30 - 21: 30)</span></p>
+      <img
+        src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/policy_images_2.svg?1734102059632"
+        alt=""
+        style="height: 35; width: 35px;"
+      /><span style="margin-left: 8px;"><span
+          style="font-weight: bold;"
+        >Freeship:</span>
+        Với đơn hàng từ
+        <span style="font-weight: bold;">800.000đ</span></span>
+      <br />
+      <img
+        src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/policy_images_3.svg?1734102059632"
+        alt=""
+        style="height: 35px; width: 35px;margin-top: 10px; margin-bottom: 10px;"
+      /><span style="margin-left: 8px; color:cadetblue;">Chính sách: Bảo hành và
+        đổi trả</span>
+      <br />
+      <img
+        src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/policy_images_4.svg?1734102059632"
+        alt=""
+        style="height: 35px; width: 35px"
+      /><span style="margin-left: 8px;">Cam kết: 100% chính hãng.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="cartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header">
+    <strong class="me-auto">Thông báo</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+  <div class="toast-body">
+    Sản phẩm đã được thêm vào giỏ hàng!
+  </div>
+</div>
+
+<!-- Load add-to-cart.js -->
+<script src="/path/to/add-to-cart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const path = window.location.pathname;
+        const productId = path.split('/').pop(); // Lấy id từ URL
+
+        if (productId) {
+            fetch(`/keycaps/get-by-id/${productId}`)
+                .then(response => response.json())
+                .then(product => {
+                    console.log("Product data:", product); // Log dữ liệu sản phẩm
+                    // Cập nhật thông tin sản phẩm
+                    document.getElementById('productImage').src = product.img;
+                    document.getElementById('productName').textContent = product.name;
+                    document.getElementById('productSlug').textContent = product.slug;
+                    document.getElementById('productPrice').textContent = product.price;
+                    document.getElementById('productOldPrice').textContent = product.old_price;
+
+                    // Cập nhật thông tin cho nút "Thêm vào giỏ hàng"
+                    const addToCartBtn = document.getElementById('addToCartBtn');
+                    addToCartBtn.dataset.id = product.id;
+                    addToCartBtn.dataset.name = product.name;
+                    addToCartBtn.dataset.price = product.price;
+                    addToCartBtn.dataset.img = product.img;
+
+                    // Gắn sự kiện cho nút "Thêm vào giỏ hàng"
+                    addToCartBtn.addEventListener('click', () => {
+                        console.log("Add to cart button clicked"); // Log khi nút được nhấn
+                        const productId = addToCartBtn.dataset.id;
+                        const productName = addToCartBtn.dataset.name;
+                        const productPrice = addToCartBtn.dataset.price.replace(/[^\d]/g, "");
+                        const productImg = addToCartBtn.dataset.img;
+
+                        console.log("Product ID:", productId); // Log ID sản phẩm
+                        console.log("Product Name:", productName); // Log tên sản phẩm
+                        console.log("Product Price:", productPrice); // Log giá sản phẩm
+                        console.log("Product Image:", productImg); // Log hình ảnh sản phẩm
+
+                        // Gọi hàm addToCart từ add-to-cart.js
+                        if (window.addToCart) {
+                            window.addToCart(productId, productName, productPrice, productImg);
+                        }
+
+                        // Hiển thị thông báo Toast
+                        const toastElement = document.getElementById("cartToast");
+                        const toast = new bootstrap.Toast(toastElement, {
+                            autohide: true,
+                            delay: 3000,
+                        });
+                        toast.show();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching product details:', error);
+                });
+        }
+    });
+</script>

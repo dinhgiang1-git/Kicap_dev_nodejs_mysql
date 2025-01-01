@@ -1,0 +1,24 @@
+{
+  "name": "kicap_dev_nodejs-mysql",
+  "version": "1.0.0",
+  "description": "Website-Keycap-KT&TKPM-UTT",
+  "main": "index.js",
+  "scripts": {
+    "watch": "node-sass --watch app/resources/scss/app.scss public/css/style.css",
+    "start": "nodemon --inspect index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dinhgiang1",
+  "license": "ISC",
+  "devDependencies": {
+    "mysql": "^2.18.1",
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "express-handlebars": "^8.0.1",
+    "morgan": "^1.10.0",
+    "node-fetch": "^3.3.2"
+  }
+}

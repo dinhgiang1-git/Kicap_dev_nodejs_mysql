@@ -1,0 +1,99 @@
+<body class="body-container">
+
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+    </div>
+
+    <!-- Slides -->
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/slider_3.jpg?1735012359663" class="d-block w-100" alt="Slide 1">
+        </div>
+        <div class="carousel-item">
+            <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/slider_2.jpg?1735012359663" class="d-block w-100" alt="Slide 2">
+        </div>
+        <div class="carousel-item">
+            <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/slider_1.jpg?1735012359663" class="d-block w-100" alt="Slide 3">
+        </div>
+        <div class="carousel-item">
+            <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/slider_4.jpg?1735012359663" class="d-block w-100" alt="Slide 4">
+        </div>
+    </div>
+
+    
+</div>  
+   
+
+    <div class="product-container">
+        <div class="title"><h4>SẢN PHẨM </h4> <h4> MỚI</h4></div>
+        <div class="product-grid" id="productGrid">
+        <!--DANH SACH SAN PHAM-->
+
+        </div>
+        <a href="/keycaps/list-page"> <button class="view-all-btn">XEM TẤT CẢ . SẢN PHẨM MỚI</button> </a>
+        
+    </div> 
+
+    
+</body>
+
+ <script>
+    const fetchKeycaps = async () => {
+        try {
+            const response = await fetch('/get-new');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const keycaps = await response.json();
+            updateProductGrid(keycaps);
+        } catch (error) {
+            console.error("Error fetching keycaps:", error);
+            document.getElementById("productGrid").innerHTML = "<p>Đã xảy ra lỗi khi tải danh sách keycap.</p>";
+        }
+    };
+
+    const updateProductGrid = (keycaps) => {
+        const productGrid = document.getElementById("productGrid");
+        productGrid.innerHTML = "";
+
+        if (keycaps.length === 0) {
+            productGrid.innerHTML = "<p>Không có sản phẩm nào.</p>";
+            return;
+        }
+
+        keycaps.forEach(keycap => {
+            const productCard = document.createElement("div");
+            productCard.className = "product-card";
+            productCard.innerHTML = `
+                <a href="/keycaps/${keycap.id}">
+                    <img src="${keycap.img}" alt="${keycap.name}">
+                </a>
+                <div class="product-info">
+                    <p class="product-title">KEYCAP BỘ</p>
+                    <a href="/keycaps/${keycap.id}" style="text-decoration: none;">
+                        <p class="product-name">${keycap.name}</p>
+                    </a>
+                    <p class="product-price">
+                        ${keycap.price} <span class="old-price">${keycap.old_price || ''}</span>
+                    </p>
+                </div>
+                <button class="add-to-cart" 
+                    data-id="${keycap.id}" 
+                    data-name="${keycap.name}" 
+                    data-price="${keycap.price}" 
+                    data-img="${keycap.img}">THÊM VÀO GIỎ HÀNG</button>
+            `;
+            productGrid.appendChild(productCard);
+        });
+
+        // Gắn sự kiện cho các nút "THÊM VÀO GIỎ HÀNG"
+        attachAddToCartEvents();
+    };
+
+    document.addEventListener("DOMContentLoaded", fetchKeycaps);
+</script>

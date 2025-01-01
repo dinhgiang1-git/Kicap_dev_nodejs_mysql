@@ -1,0 +1,114 @@
+<header>
+   <div class="header">
+        <div class="container">
+            <div class="hotline">
+                <p class="text">HOTLINE TƯ VẤN:</p>
+                <p class="number">0369161095</p>
+            </div>
+
+            <div class="logo">
+                <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/logo.png?1734102059632" alt="">
+            </div>
+
+            <div class="login-out-search-store">
+                <p>TÀI KHOẢN</p>
+                    <p>
+                        <a href="#" 
+                        style="color: black; text-decoration: none; background-color: beige" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#cartModal">
+                            GIỎ HÀNG
+                        </a> 
+                        <span class="quantity">0</span>
+                    </p>
+                <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+                </p>
+            </div>
+        </div>
+
+            <div class="navbar">
+                <div class="nav">
+                <ul>
+                    <li><a href="/">TRANG CHỦ</a></li>
+                    <li class="dropdown">
+                        <a href="#">KEYCAP BỘ</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Keycap Cherry</a></li>
+                            <li><a href="#">Keycap XDA</a></li>
+                        </ul>
+                    </li>
+                    <li>BÀN PHÍM CƠ</li>
+                    <li>HÀNG CŨ</li>
+                    <li>MODS PHÍM</li>
+                    <li>SẢN PHẨM</li>
+                    <li>BÀI VIẾT</li>
+                    <li>VỀ KICAP</li>
+                </ul>
+                </div>
+
+            </div>
+
+            <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="cartToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Sản phẩm đã được thêm vào giỏ hàng thành công!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+   </div>
+
+
+<!-- Modal Giỏ Hàng -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cartModalLabel">Giỏ Hàng Của Bạn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Danh sách sản phẩm -->
+                <div id="cartItems">
+                    {{#each cart}}
+                    <div class="cart-item d-flex align-items-center mb-3">
+                        <img src="{{this.image}}" 
+                             alt="{{this.name}}" 
+                             class="img-thumbnail me-3" 
+                             style="width: 80px; height: 80px;">
+                        <div class="cart-details flex-grow-1">
+                            <p class="mb-1">{{this.name}}</p>
+                            <p class="mb-1 text-muted">{{this.price}}đ</p>
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-sm btn-outline-secondary me-2" onclick="decreaseQuantity({{this.id}})">-</button>
+                                <span>{{this.quantity}}</span>
+                                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="increaseQuantity({{this.id}})">+</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-danger ms-3" onclick="removeItem({{this.id}})">Xóa</button>
+                    </div>
+                    {{/each}}
+                </div>
+
+                <!-- Tổng tiền -->
+                <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
+                    <p class="fw-bold mb-0">Tổng cộng:</p>
+                    <p class="fw-bold mb-0">{{totalPrice}}đ</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tiếp Tục Mua Sắm</button>
+                <button type="button" class="btn btn-primary">Thanh Toán</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</header>
+
+

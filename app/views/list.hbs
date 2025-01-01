@@ -1,0 +1,88 @@
+<div class="product-container">
+    <div class="bread" style="margin: 0 auto; text-align: left; padding-bottom: 6px; border-bottom: 1px solid #ccc; padding-top: 5px; border-top: 1px solid #ccc;">
+        <a href="/">Trang chủ</a>
+        <span></span>
+        <span> > <a href="/keycaps/list-page">Danh sách sản phẩm</a></span>
+    </div>
+    <div class="title"><h4>SẢN PHẨM </h4> <h4> MỚI</h4></div>
+    
+    <div class="filter-list">
+        <div class="sort-list">
+            <ul style="padding: 0;">
+                <li>Xếp theo:</li>
+                <li><input type="radio" name="sort" id="A-Z" value="A-Z"><label for="A-Z">Tên A-Z</label></li>
+                <li><input type="radio" name="sort" id="Z-A" value="Z-A"><label for="Z-A">Tên Z-A</label></li>
+                <li><input type="radio" name="sort" id="new" value="new"><label for="new" >Hàng mới</label></li>
+                <li><input type="radio" name="sort" id="asc" value="asc"><label for="asc" >Giá thấp đến cao</label></li>
+                <li><input type="radio" name="sort" id="dsc" value="dsc"><label for="dsc" >Giá cao xuống thấp</label></li>
+            </ul>
+        </div>
+        <div class="search-list">
+            <form id="search-form">
+                <label for="search-list">Tìm kiếm: </label>
+                <input type="text" placeholder="Từ khóa ..." id="search">    
+                <button type="button" id="reset-filters" style="margin-left: 20px; border: solid 1px #ccc;">Hủy lọc</button>                
+            </form>
+        </div>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+        <!-- Sản phẩm sẽ được hiển thị ở đây -->
+    </div>
+</div> 
+
+<script>
+    const fetchKeycaps = async () => {
+        try {
+            const response = await fetch('/keycaps/list');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const keycaps = await response.json();
+            updateProductGrid(keycaps);
+        } catch (error) {
+            console.error("Error fetching keycaps:", error);
+            document.getElementById("productGrid").innerHTML = "<p>Đã xảy ra lỗi khi tải danh sách keycap.</p>";
+        }
+    };
+
+    const updateProductGrid = (keycaps) => {
+        const productGrid = document.getElementById("productGrid");
+        productGrid.innerHTML = "";
+
+        if (keycaps.length === 0) {
+            productGrid.innerHTML = "<p>Không có sản phẩm nào.</p>";
+            return;
+        }
+
+        keycaps.forEach(keycap => {
+            const productCard = document.createElement("div");
+            productCard.className = "product-card";
+            productCard.innerHTML = `
+                <a href="/keycaps/${keycap.id}">
+                    <img src="${keycap.img}" alt="${keycap.name}">
+                </a>
+                <div class="product-info">
+                    <p class="product-title">KEYCAP BỘ</p>
+                    <a href="/keycaps/${keycap.id}" style="text-decoration: none;">
+                        <p class="product-name">${keycap.name}</p>
+                    </a>
+                    <p class="product-price">
+                        ${keycap.price} <span class="old-price">${keycap.old_price || ''}</span>
+                    </p>
+                </div>
+                <button class="add-to-cart" 
+                    data-id="${keycap.id}" 
+                    data-name="${keycap.name}" 
+                    data-price="${keycap.price}" 
+                    data-img="${keycap.img}">THÊM VÀO GIỎ HÀNG</button>
+            `;
+            productGrid.appendChild(productCard);
+        });
+
+        // Gắn sự kiện cho các nút "THÊM VÀO GIỎ HÀNG"
+        attachAddToCartEvents();
+    };
+
+    document.addEventListener("DOMContentLoaded", fetchKeycaps);
+</script>
