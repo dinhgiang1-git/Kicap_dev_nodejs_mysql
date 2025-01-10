@@ -8,13 +8,16 @@ exports.show = (req, res) => {
 }
 
 exports.getAll = (req, res) => {
-    Keycap.get_all( function (result) {
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 5; 
+
+    Keycap.get_all_paginated(page, limit, function (result) {
         if (!result) {
             return res.status(500).send('Error fetching!');
         }
         res.json(result);
     });
-}
+};
 
 exports.add_Keycap = (req, res) => {
     var data = req.body;

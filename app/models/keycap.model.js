@@ -121,5 +121,31 @@ Keycap.searchByKeyword = function (keyword, result) {
 };
 
 
+Keycap.get_all_paginated = function (page, limit, callback) {
+    const offset = (page - 1) * limit; // Tính toán vị trí bắt đầu
+    const query = 'SELECT * FROM keycap LIMIT ? OFFSET ?';
+    db.query(query, [limit, offset], function (err, result) {
+        if (err) {
+            callback(null);
+        } else {
+            // Lấy tổng số sản phẩm để tính tổng số trang
+            db.query('SELECT COUNT(*) AS total FROM keycap', function (err, countResult) {
+                if (err) {
+                    callback(null);
+                } else {
+                    const totalProducts = countResult[0].total;
+                    const totalPages = Math.ceil(totalProducts / limit);
+                    callback({
+                        products: result,
+                        totalPages: totalPages,
+                        currentPage: page
+                    });
+                }
+            });
+        }
+    });
+};
+
+
 
 module.exports = Keycap;

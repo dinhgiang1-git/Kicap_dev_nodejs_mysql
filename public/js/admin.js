@@ -1,15 +1,24 @@
 // Hàm lấy danh sách sản phẩm
-const fetchProducts = async () => {
+let currentPage = 1; // Trang hiện tại
+
+const fetchProducts = async (page = 1, limit = 10) => {
     try {
-        const response = await fetch('/admin/get-all');
+        const response = await fetch(`http://localhost:3000/admin/get-all?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const products = await response.json();
+        const data = await response.json();
+        const { products, totalPages } = data;
+
         const productTable = document.getElementById("productTable");
         productTable.innerHTML = ''; // Xóa dữ liệu cũ trước khi render mới
 
-        // Trong hàm fetchProducts
+        // Hiển thị sản phẩm
         products.forEach((product, index) => {
             const row = document.createElement("tr");
             row.setAttribute("data-id", product.id); // Thêm data-id để xác định sản phẩm
@@ -27,21 +36,51 @@ const fetchProducts = async () => {
             `;
             productTable.appendChild(row);
         });
+
+        // Hiển thị phân trang
+        renderPagination(totalPages, page);
+                // Cập nhật URL
+                window.history.pushState({}, '', `?page=${page}&limit=${limit}`);
     } catch (error) {
         console.error("Lỗi khi lấy dữ liệu từ API:", error);
     }
 };
 
+// Hàm hiển thị phân trang
+const renderPagination = (totalPages, currentPage) => {
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = ''; // Xóa phân trang cũ
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement("li");
+        li.classList.add("page-item");
+        if (i === currentPage) {
+            li.classList.add("active");
+        }
+        li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+        pagination.appendChild(li);
+    }
+};
+
+// Hàm chuyển trang
+const changePage = (page) => {
+    currentPage = page;
+    fetchProducts(page);
+};
+
+// Gọi hàm khi tải trang
+document.addEventListener("DOMContentLoaded", () => fetchProducts(currentPage));
+
 // Hàm thêm sản phẩm
 const addProduct = async () => {
-    const name = document.getElementById("productName").value;
-    const price = document.getElementById("productPrice").value;
-    const oldPrice = document.getElementById("productOldPrice").value;
-    const img = document.getElementById("productImage").value;
-    const slug = document.getElementById("productSlug").value;
+    const name = document.getElementById("modalProductName").value;
+    const price = document.getElementById("modalProductPrice").value;
+    const oldPrice = document.getElementById("modalProductOldPrice").value;
+    const img = document.getElementById("modalProductImage").value;
+    const slug = document.getElementById("modalProductSlug").value;
 
     try {
-        const response = await fetch('/admin/add-keycap', {
+        const response = await fetch('http://localhost:3000/admin/add-keycap', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,9 +98,17 @@ const addProduct = async () => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         showToast("Thêm sản phẩm thành công!", 'success');
-        fetchProducts();
+        fetchProducts(currentPage); // Cập nhật lại danh sách sản phẩm và phân trang
+
+        // Đóng modal sau khi thêm thành công
+        const addModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+        addModal.hide();
+
+        // Xóa dữ liệu trong form
+        document.getElementById("addProductForm").reset();
     } catch (error) {
         console.error("Lỗi khi thêm sản phẩm:", error);
+        showToast("Đã xảy ra lỗi khi thêm sản phẩm!", 'error');
     }
 };
 
@@ -70,7 +117,7 @@ const deleteProduct = async (id) => {
     if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
 
     try {
-        const response = await fetch(`/admin/delete-keycap/${id}`, {
+        const response = await fetch(`http://localhost:3000/admin/delete-keycap/${id}`, {
             method: 'DELETE',
         });
 
@@ -116,7 +163,7 @@ const editProduct = (id) => {
 // Hàm cập nhật sản phẩm
 const updateProduct = async (id, name, price, oldPrice, img, slug) => {
     try {
-        const response = await fetch('/admin/update-keycap', {
+        const response = await fetch('http://localhost:3000/admin/update-keycap', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -167,11 +214,6 @@ const saveProductChanges = async () => {
 // Gọi hàm khi tải trang
 document.addEventListener("DOMContentLoaded", fetchProducts);
 
-// Thêm sự kiện cho nút thêm sản phẩm
-document.getElementById("addProductForm").addEventListener("submit", (e) => {
-    e.preventDefault(); // Ngăn chặn reload trang
-    addProduct();
-});
 
 // Hàm hiển thị toast message
 const showToast = (message, type = 'info') => {

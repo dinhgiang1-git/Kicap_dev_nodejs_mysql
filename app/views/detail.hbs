@@ -103,16 +103,20 @@
   </div>
 </div>
 
-<!-- Load add-to-cart.js -->
-<script src="/path/to/add-to-cart.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const path = window.location.pathname;
         const productId = path.split('/').pop(); // Lấy id từ URL
+        console.log(productId);
 
         if (productId) {
-            fetch(`/keycaps/get-by-id/${productId}`)
+            fetch(`http://localhost:3000/keycaps/get-by-id/${productId}`, {
+              method: 'GET', 
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
                 .then(response => response.json())
                 .then(product => {
                     console.log("Product data:", product); // Log dữ liệu sản phẩm

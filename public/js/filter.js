@@ -39,14 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Xử lý tìm kiếm
     const handleSearch = (query) => {
-        fetch(`/keycaps/list/search?search=${query}`)
+        fetch(`http://localhost:3000/keycaps/list/search?search=${query}`)
             .then((response) => response.json())
             .then((data) => updateProductGrid(data))
             .catch((err) => console.error("Error searching products:", err));
     };
 
     const loadInitialProducts = () => {
-        fetch(`/keycaps/list`)
+        fetch(`http://localhost:3000/keycaps/list`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Xử lý sắp xếp
     const handleSort = (sortValue) => {
-        fetch(`/keycaps/list/filter?sort=${sortValue}`)
+        fetch(`http://localhost:3000/keycaps/list/filter?sort=${sortValue}`)
             .then((response) => response.json())
             .then((data) => updateProductGrid(data))
             .catch((err) => console.error("Error fetching filtered products:", err));
